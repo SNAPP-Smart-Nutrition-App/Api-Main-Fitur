@@ -1,5 +1,6 @@
+require('dotenv').config();
 const firestore = require('../config/firestore');
-const { bucket } = require('../config/storage');
+
 async function storePrediction(data) {
     try {
         // Validasi data
@@ -29,26 +30,4 @@ async function storePrediction(data) {
     }
 }
 
-async function getAllPredictions(limit = 10) {
-    try {
-        const predictionsRef = firestore.collection('predictions');
-        const snapshot = await predictionsRef
-            .orderBy('createdAt', 'desc')
-            .limit(limit)
-            .get();
-
-        if (snapshot.empty) {
-            return [];
-        }
-
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-    } catch (error) {
-        console.error('Error getting predictions:', error);
-        throw new Error('Gagal mengambil daftar prediksi');
-    }
-}
-
-module.exports = { storePrediction, getAllPredictions };
+module.exports = { storePrediction };

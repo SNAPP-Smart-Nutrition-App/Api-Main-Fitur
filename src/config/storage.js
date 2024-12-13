@@ -1,12 +1,9 @@
 // src/config/storage.js
 const {Storage} = require('@google-cloud/storage');
-require('dotenv').config();
 
 const storage = new Storage({
-    projectId: process.env.GOOGLE_CLOUD_PROJECT,
-    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+    projectId: 'c242-ps287',
+    keyFilename: './gcloud-key.json'
 });
 
-const bucket = storage.bucket(process.env.BUCKET_NAME);
-
-module.exports = { storage, bucket };
+module.exports = { storage };
