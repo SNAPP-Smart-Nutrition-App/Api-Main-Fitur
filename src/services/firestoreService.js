@@ -29,25 +29,6 @@ async function storePrediction(data) {
     }
 }
 
-async function getPredictionById(id) {
-    try {
-        const docRef = firestore.collection('predictions').doc(id);
-        const doc = await docRef.get();
-
-        if (!doc.exists) {
-            throw new Error('Data prediksi tidak ditemukan');
-        }
-
-        return {
-            id: doc.id,
-            ...doc.data()
-        };
-    } catch (error) {
-        console.error('Error getting prediction:', error);
-        throw new Error(`Gagal mengambil data prediksi: ${error.message}`);
-    }
-}
-
 async function getAllPredictions(limit = 10) {
     try {
         const predictionsRef = firestore.collection('predictions');
@@ -66,12 +47,8 @@ async function getAllPredictions(limit = 10) {
         }));
     } catch (error) {
         console.error('Error getting predictions:', error);
-        throw new Error(`Gagal mengambil data prediksi: ${error.message}`);
+        throw new Error('Gagal mengambil daftar prediksi');
     }
 }
 
-module.exports = { 
-    storePrediction, 
-    getPredictionById,
-    getAllPredictions 
-};
+module.exports = { storePrediction, getAllPredictions };

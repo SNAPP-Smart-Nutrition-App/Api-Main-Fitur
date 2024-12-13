@@ -7,26 +7,22 @@ const init = async () => {
         port: 3000,
         host: 'localhost',
         routes: {
-            cors: {
-                origin: ['*'], // Ubah jika Anda ingin mengatur akses hanya untuk domain tertentu
-            },
-        },
+            cors: true
+        }
     });
 
-    // Muat model TensorFlow saat server diinisialisasi
+    // Load model
     const model = await loadModel();
     server.app.model = model;
 
-    // Tambahkan rute
     server.route(routes);
 
-    // Jalankan server
     await server.start();
-    console.log(`Server berjalan pada ${server.info.uri}`);
+    console.log('Server running on %s', server.info.uri);
 };
 
 process.on('unhandledRejection', (err) => {
-    console.error(err);
+    console.log(err);
     process.exit(1);
 });
 

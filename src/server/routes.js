@@ -2,7 +2,7 @@ const {
   postPredictHandler, 
   getPredictionHandler, 
   getAllPredictionsHandler 
-} = require('../server/handler');
+} = require('./handler');
 const Joi = require('@hapi/joi');
 
 const routes = [
@@ -31,20 +31,27 @@ const routes = [
   {
     method: 'GET',
     path: '/predictions/{id}',
-    handler: getPredictionHandler
-},
-{
+    handler: getPredictionHandler,
+    options: {
+      validate: {
+        params: Joi.object({
+          id: Joi.string().required()
+        })
+      }
+    }
+  },
+  {
     method: 'GET',
     path: '/predictions',
     handler: getAllPredictionsHandler,
     options: {
-        validate: {
-            query: Joi.object({
-                limit: Joi.number().min(1).max(100).default(10)
-            })
-        }
+      validate: {
+        query: Joi.object({
+          limit: Joi.number().min(1).max(100).default(10)
+        })
+      }
     }
-}
+  }
 ];
 
 module.exports = routes;
