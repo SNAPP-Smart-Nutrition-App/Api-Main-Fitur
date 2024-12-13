@@ -1,6 +1,9 @@
 const predictClassification = require('../services/inferenceService');
 const { storePrediction, getPredictionById, getAllPredictions } = require('../services/firestoreService');
 const crypto = require('crypto');
+const path = require('path');
+const { bucket } = require('../config/storage');
+require('dotenv').config();
 
 async function postPredictHandler(request, h) {
     try {
@@ -14,6 +17,9 @@ async function postPredictHandler(request, h) {
                 message: 'Tidak ada gambar yang diunggah'
             }).code(400);
         }
+
+        const fileName = `${id}-${Date.now()}${path.extname(image.hapi.filename)}`;
+        const fileUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${fileName}`;
 
         const buffer = await new Promise((resolve, reject) => {
             const chunks = [];
@@ -29,6 +35,12 @@ async function postPredictHandler(request, h) {
             image.on('error', reject);
         });
 
+        // Upload gambar ke bucket
+        const file = bucket.file(fileName);
+        await file.save(buffer, {
+            contentType: image.hapi.headers['content-type']
+        });
+
         const { confidenceScore, label, name, calories, carbon, protein, fat } =
             await predictClassification(model, buffer);
 
@@ -36,6 +48,7 @@ async function postPredictHandler(request, h) {
 
         const data = {
             id,
+            imageUrl: fileUrl,
             result: label,
             name: name,
             calories,
